@@ -1,0 +1,246 @@
+[
+    {
+        "id": "86cd22557598f2f4",
+        "type": "tab",
+        "label": "Flow 10",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "6b25f3976507f3c5",
+        "type": "mqtt in",
+        "z": "86cd22557598f2f4",
+        "name": "",
+        "topic": "codigoIoT/SIC/sintomas",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "9911ca4670b98d12",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 183,
+        "y": 104,
+        "wires": [
+            [
+                "63af0dd82167dc72",
+                "0d4e18442d166135"
+            ]
+        ]
+    },
+    {
+        "id": "0d4e18442d166135",
+        "type": "debug",
+        "z": "86cd22557598f2f4",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 483,
+        "y": 224,
+        "wires": []
+    },
+    {
+        "id": "63af0dd82167dc72",
+        "type": "json",
+        "z": "86cd22557598f2f4",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 463,
+        "y": 104,
+        "wires": [
+            [
+                "0d4e18442d166135",
+                "59ba31917ba6c292",
+                "70a2e7309c0ecc5b",
+                "53eac5cb64a8b7c5"
+            ]
+        ]
+    },
+    {
+        "id": "3024be7e60da2ce5",
+        "type": "ui_gauge",
+        "z": "86cd22557598f2f4",
+        "name": "",
+        "group": "8cca2a0020a7b216",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Ritmo Cardiaco",
+        "label": "BPM",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "150",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "x": 933,
+        "y": 104,
+        "wires": []
+    },
+    {
+        "id": "8f1f397b7ccde4a0",
+        "type": "ui_gauge",
+        "z": "86cd22557598f2f4",
+        "name": "",
+        "group": "8cca2a0020a7b216",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Oxigenación (SpO2)",
+        "label": "%",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "x": 953,
+        "y": 164,
+        "wires": []
+    },
+    {
+        "id": "59ba31917ba6c292",
+        "type": "function",
+        "z": "86cd22557598f2f4",
+        "name": "",
+        "func": "global.set (\"ritmo\", msg.payload.HR);\nmsg.payload = msg.payload.HR;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 713,
+        "y": 104,
+        "wires": [
+            [
+                "3024be7e60da2ce5"
+            ]
+        ]
+    },
+    {
+        "id": "70a2e7309c0ecc5b",
+        "type": "function",
+        "z": "86cd22557598f2f4",
+        "name": "",
+        "func": "global.set (\"oxi\", msg.payload.SPO2);\nmsg.payload = msg.payload.SPO2;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 713,
+        "y": 164,
+        "wires": [
+            [
+                "8f1f397b7ccde4a0"
+            ]
+        ]
+    },
+    {
+        "id": "53eac5cb64a8b7c5",
+        "type": "function",
+        "z": "86cd22557598f2f4",
+        "name": "",
+        "func": "if (msg.payload.HR > 130 && msg.payload.SPO2 > 90) {\n    msg.payload = \"Ritmo cardiaco demasiado alto. Diríjase a su unidad médica.\";\n} else if (msg.payload.SPO2 < 90) {\n    msg.payload = \"Oxigenación demasiado baja, sospecha de covid. Diríjase a su unidad médica.\";\n} else if (msg.payload.HR > 60 && msg.payload.HR < 129 && msg.payload.SPO2 > 90 && msg.payload.SPO2 <= 100) {\n    msg.payload = \"Diagnostico normal\";\n} else {\n    msg.payload = \"Verificar sensor\";\n}\nglobal.set (\"diag\", msg.payload);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 713,
+        "y": 244,
+        "wires": [
+            [
+                "c8a51b7624fdd3d0"
+            ]
+        ]
+    },
+    {
+        "id": "c8a51b7624fdd3d0",
+        "type": "ui_text",
+        "z": "86cd22557598f2f4",
+        "group": "2a10354c6c6591df",
+        "order": 0,
+        "width": "6",
+        "height": "4",
+        "name": "",
+        "label": "Diagnostico",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "x": 923,
+        "y": 244,
+        "wires": []
+    },
+    {
+        "id": "9911ca4670b98d12",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "192.168.0.108",
+        "port": "1883",
+        "clientid": "alainmm",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "sessionExpiry": ""
+    },
+    {
+        "id": "8cca2a0020a7b216",
+        "type": "ui_group",
+        "name": "Sintomas",
+        "tab": "35a0d894098caebf",
+        "order": 2,
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "2a10354c6c6591df",
+        "type": "ui_group",
+        "name": "Diagnostico estimado",
+        "tab": "35a0d894098caebf",
+        "order": 3,
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "35a0d894098caebf",
+        "type": "ui_tab",
+        "name": "Detector de sintomas COVID avanzado",
+        "icon": "dashboard",
+        "order": 1,
+        "disabled": false,
+        "hidden": false
+    }
+]

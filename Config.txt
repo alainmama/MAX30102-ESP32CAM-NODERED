@@ -1,0 +1,20 @@
+Instalar la librería SparkFun MAX3010x Pulse and Proximity Sensor Library en el IDE de Arduino
+
+*SKetch->include library->manage libraries->SparkFun MAX3010x Pulse and Proximity Sensor Library
+
+Configurar los siguientes campos
+*Datos de WiFi
+const char* ssid = "RDS..2648";  // Aquí debes poner el nombre de tu red
+const char* password = "05345229"; //Password de la red
+
+Actualizar la IP del broker local (IP de la maquina virtual)
+La maquina virtual debe estar en modo puente
+Utilice ifconfig en consola para descubrir la ip local
+
+//Datos del broker MQTT
+const char* mqtt_server = "192.168.0.101"; // Si estas en una red local, coloca la IP asignada, en caso contrario, coloca la IP publica
+IPAddress server(192,168,0,101);
+
+
+Importar el flow en Node Red
+Configurar el node red con la misma IP y tópico
